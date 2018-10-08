@@ -15,7 +15,7 @@ public interface MealDao {
 
     void update(MealWithExceed mealWithExceed);
 
-    List<MealWithExceed> delete(int id);
+    void delete(int id);
 
     int generateId();
 }
