@@ -20,8 +20,8 @@ public class MealServlet extends HttpServlet {
     private static final Logger log = getLogger(MealServlet.class);
     private MealDao mealDao = new MealDaoImpl();
 
-    private String MEAL_LIST = "mealList.jsp";
-    private String INSERT_OR_EDIT = "meal.jsp";
+    private final String MEAL_LIST = "mealList.jsp";
+    private final String INSERT_OR_EDIT = "meal.jsp";
 
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -29,15 +29,14 @@ public class MealServlet extends HttpServlet {
         String action = req.getParameter("action");
 
         if (action == null) {
-            jspPage = defaultGet(req, resp);
+            defaultGet(req, resp);
         } else {
             switch (action) {
                 case "delete":
                     log.debug("Delete meal");
                     int userId = Integer.parseInt(req.getParameter("userId"));
-                    jspPage = MEAL_LIST;
                     mealDao.delete(userId);
-                    req.setAttribute("mealList", MealsUtil.getFilteredWithExceeded(mealDao.findAll(), LocalTime.MIN, LocalTime.MAX, MealsUtil.CALORIES_PER_DAY));
+                    resp.sendRedirect("meals");
                     break;
                 case "edit":
                     log.debug("Edit meal");
@@ -45,20 +44,20 @@ public class MealServlet extends HttpServlet {
                     int userIdMeal = Integer.parseInt(req.getParameter("userId"));
                     Meal meal = mealDao.getById(userIdMeal);
                     req.setAttribute("meal", meal);
+                    req.getRequestDispatcher(jspPage).forward(req, resp);
                     break;
                 case "showMeals":
-                    jspPage = defaultGet(req, resp);
+                    defaultGet(req, resp);
                     break;
                 case "insert":
                     log.debug("Insert meal");
                     jspPage = INSERT_OR_EDIT;
+                    req.getRequestDispatcher(jspPage).forward(req, resp);
                     break;
                 default:
-                    jspPage = defaultGet(req, resp);
+                    defaultGet(req, resp);
             }
         }
-
-        req.getRequestDispatcher(jspPage).forward(req, resp);
     }
 
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -66,15 +65,20 @@ public class MealServlet extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
         Meal meal = new Meal(LocalDateTime.parse(req.getParameter("datetime")), req.getParameter("description"), Integer.parseInt(req.getParameter("calories")));
 
-        mealDao.add(meal);
+        String userIdRaw = req.getHeader("Referer");
+        String userId = userIdRaw.substring(userIdRaw.lastIndexOf("=") + 1);
 
-        req.setAttribute("mealList", MealsUtil.getFilteredWithExceeded(mealDao.findAll(), LocalTime.MIN, LocalTime.MAX, MealsUtil.CALORIES_PER_DAY));
-        req.getRequestDispatcher(MEAL_LIST).forward(req, resp);
+        if (userId.isEmpty()) {
+            mealDao.add(meal);
+        } else {
+            mealDao.update(meal);
+        }
+        resp.sendRedirect("meals");
     }
 
-    private String defaultGet(HttpServletRequest req, HttpServletResponse resp) {
+    private void defaultGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         log.debug("Show list Meals");
         req.setAttribute("mealList", MealsUtil.getFilteredWithExceeded(mealDao.findAll(), LocalTime.MIN, LocalTime.MAX, MealsUtil.CALORIES_PER_DAY));
-        return MEAL_LIST;
+        req.getRequestDispatcher(MEAL_LIST).forward(req, resp);
     }
 }
