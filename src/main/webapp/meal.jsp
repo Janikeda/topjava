@@ -9,7 +9,7 @@
 <h2><a href="meals?action=showMeals">Back</a></h2>
 
 <form action="meals" method="post">
-
+    <input type="hidden" name="id" value="${meal.id}">
     <p>Date/Time</p>
     <input title="Date/Time" type="datetime-local" name="datetime"
            value="<c:out value="${meal.dateTime}" />"/>

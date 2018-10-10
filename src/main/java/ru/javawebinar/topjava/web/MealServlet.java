@@ -2,7 +2,7 @@ package ru.javawebinar.topjava.web;
 
 import org.slf4j.Logger;
 import ru.javawebinar.topjava.dao.MealDao;
-import ru.javawebinar.topjava.dao.MealDaoImpl;
+import ru.javawebinar.topjava.dao.MealDaoMemoryImpl;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.MealsUtil;
 
@@ -18,11 +18,16 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = getLogger(MealServlet.class);
-    private MealDao mealDao = new MealDaoImpl();
+    private MealDao mealDao;
+    private String MEAL_LIST;
+    private String INSERT_OR_EDIT;
 
-    private final String MEAL_LIST = "mealList.jsp";
-    private final String INSERT_OR_EDIT = "meal.jsp";
-
+    @Override
+    public void init() {
+        mealDao = new MealDaoMemoryImpl();
+        MEAL_LIST = "mealList.jsp";
+        INSERT_OR_EDIT = "meal.jsp";
+    }
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String jspPage = "";
@@ -64,13 +69,12 @@ public class MealServlet extends HttpServlet {
         log.debug("Add meal");
         req.setCharacterEncoding("UTF-8");
         Meal meal = new Meal(LocalDateTime.parse(req.getParameter("datetime")), req.getParameter("description"), Integer.parseInt(req.getParameter("calories")));
+        String mealId = req.getParameter("id");
 
-        String userIdRaw = req.getHeader("Referer");
-        String userId = userIdRaw.substring(userIdRaw.lastIndexOf("=") + 1);
-
-        if (userId.isEmpty()) {
+        if (mealId.isEmpty()) {
             mealDao.add(meal);
         } else {
+            meal.setId(Integer.parseInt(mealId));
             mealDao.update(meal);
         }
         resp.sendRedirect("meals");
