@@ -55,9 +55,9 @@ public class MealDaoMemoryImpl implements MealDao {
 
     @Override
     public Meal update(Meal meal) {
-        delete(meal.getId());
+        //delete(meal.getId());
         Meal mealForDb = new Meal(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories());
-        mapMealData.put(mealForDb.getId(), mealForDb);
+        mapMealData.replace(meal.getId(), meal, mealForDb);
         return mealForDb;
     }
 
