@@ -27,16 +27,15 @@ public class MealRestController {
         this.service = service;
     }
 
-    public List<MealWithExceed> getAll() {
+    public List<MealWithExceed> getAll(int userId) {
         log.info("getAll");
-        return MealsUtil.getWithExceeded(service.getAll(SecurityUtil.authUserId()),SecurityUtil.authUserCaloriesPerDay());
+        return MealsUtil.getWithExceeded(service.getAll(userId),SecurityUtil.authUserCaloriesPerDay());
     }
 
     public List<MealWithExceed> getAllFiltered(LocalDateTime dateTimeStart, LocalDateTime dateTimeEnd) {
         log.info("getAllFiltered");
         return MealsUtil.getFilteredWithExceeded(service.getAll(SecurityUtil.authUserId()),SecurityUtil.authUserCaloriesPerDay(), dateTimeStart.toLocalTime(), dateTimeEnd.toLocalTime());
     }
-
 
     public Meal get(int id) {
         log.info("get {}", id);

@@ -3,7 +3,6 @@ package ru.javawebinar.topjava.web;
 import org.slf4j.Logger;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.user.AdminRestController;
 
 import javax.servlet.ServletException;
@@ -27,17 +26,28 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getParameter("action");
         log.debug("forward to users");
-        request.getRequestDispatcher("/users.jsp").forward(request, response);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String userId = req.getParameter("userId");
-        if (Integer.parseInt(userId) == SecurityUtil.authUserId()) {
-            resp.sendRedirect("meals");
-        }  else {
-            throw new NotFoundException("Sorry, there is no food for you :(");
+        switch (action == null ? "all" : action) {
+            case "showMealList":
+                String userId = request.getParameter("id");
+                response.sendRedirect("/topjava/meals?userId="+userId);
+                break;
+            case "all":
+            default:
+                request.setAttribute("users", adminRestController.getAll());
+                request.getRequestDispatcher("/users.jsp").forward(request, response);
+                break;
         }
     }
 }
+
+//    @Override
+//    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+//        String userId = req.getParameter("userId");
+//        if (Integer.parseInt(userId) == SecurityUtil.authUserId()) {
+//            resp.sendRedirect("meals");
+//        }  else {
+//            throw new NotFoundException("Sorry, there is no food for you :(");
+//        }
+//    }

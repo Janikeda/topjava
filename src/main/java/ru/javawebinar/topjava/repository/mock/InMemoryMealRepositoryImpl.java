@@ -16,9 +16,14 @@ import java.util.stream.Collectors;
 public class InMemoryMealRepositoryImpl implements MealRepository {
     private Map<Integer, Meal> repository = new ConcurrentHashMap<>();
     private AtomicInteger counter = new AtomicInteger(0);
+    private Map<Integer, Map<Integer,Meal>> repositoryId = new ConcurrentHashMap<>(repository);;
 
     {
         MealsUtil.MEALS.forEach(this::save);
+    }
+
+    private void populateRepoCommonMap(Map<Integer, Meal> map) {
+        map.merge()
     }
 
     @Override
@@ -26,6 +31,7 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
             repository.put(meal.getId(), meal);
+            repositoryId.merge(meal.getUserId(), repository, meal.getUserId() -> meal);
             return meal;
         }
         // treat case: update, but absent in storage
@@ -34,19 +40,19 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
 
     @Override
     public boolean delete(int id) {
-        return repository.remove(id) != null;
+        return repositoryId.remove(id) != null;
     }
 
     @Override
-    public Meal get(int id) {
-        return repository.get(id);
+    public Meal get(int idMeal) {
+        return repository.get(idMeal);
     }
 
     @Override
     public List<Meal> getAll(int userId) {
-        return repository.values().stream()
-                .filter(meal -> meal.getUserId() == userId)
+        return repositoryId.get(userId).values().stream()
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
     }
+
 }

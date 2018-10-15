@@ -21,7 +21,12 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
     private AtomicInteger counter = new AtomicInteger(0);
 
     {
-        UsersUtil.USERS.forEach(this::save);
+        UsersUtil.USERS.forEach(this::populateRepo);
+    }
+
+    private void populateRepo(User user) {
+        user.setId(counter.incrementAndGet());
+        repository.put(user.getId(), user);
     }
 
     @Override
