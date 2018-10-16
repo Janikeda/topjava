@@ -14,16 +14,26 @@ import java.util.stream.Collectors;
 
 @Repository
 public class InMemoryMealRepositoryImpl implements MealRepository {
-    private Map<Integer, Meal> repository = new ConcurrentHashMap<>();
     private AtomicInteger counter = new AtomicInteger(0);
-    private Map<Integer, Map<Integer,Meal>> repositoryId = new ConcurrentHashMap<>(repository);;
+    private Map<Integer, Meal> repository = new ConcurrentHashMap<>();
+    private Map<Integer, Map<Integer, Meal>> repositoryId;
 
     {
         MealsUtil.MEALS.forEach(this::save);
+        repositoryId = populateRepoCommonMap(repository);
     }
 
-    private void populateRepoCommonMap(Map<Integer, Meal> map) {
-        map.merge()
+    private Map<Integer, Map<Integer, Meal>> populateRepoCommonMap(Map<Integer, Meal> map) {
+        Map<Integer, Map<Integer, Meal>> mapCommon = new ConcurrentHashMap<>();
+        map.forEach((k, v) -> mapCommon.merge(v.getUserId(), new ConcurrentHashMap<>(), (a, b) -> {
+            Map<Integer, Meal> mapA = new ConcurrentHashMap<>(a);
+            Map<Integer, Meal> mapB = new ConcurrentHashMap<>(b);
+            mapA.put(k, v);
+            mapB.put(k, v);
+            mapB.putAll(mapA);
+            return mapB;
+        }));
+        return mapCommon;
     }
 
     @Override
@@ -31,7 +41,6 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
             repository.put(meal.getId(), meal);
-            repositoryId.merge(meal.getUserId(), repository, meal.getUserId() -> meal);
             return meal;
         }
         // treat case: update, but absent in storage
@@ -40,12 +49,12 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
 
     @Override
     public boolean delete(int id) {
-        return repositoryId.remove(id) != null;
+        return repository.remove(id, repository.get(id));
     }
 
     @Override
-    public Meal get(int idMeal) {
-        return repository.get(idMeal);
+    public Meal get(int id) {
+        return repository.get(id);
     }
 
     @Override
@@ -54,5 +63,4 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
     }
-
 }

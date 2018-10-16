@@ -8,6 +8,7 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.transfer_objects.MealWithExceed;
 import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.time.LocalDateTime;
@@ -27,19 +28,23 @@ public class MealRestController {
         this.service = service;
     }
 
-    public List<MealWithExceed> getAll(int userId) {
+    public List<MealWithExceed> getAll() {
         log.info("getAll");
-        return MealsUtil.getWithExceeded(service.getAll(userId),SecurityUtil.authUserCaloriesPerDay());
+        return MealsUtil.getWithExceeded(service.getAll(SecurityUtil.getAuthUserId()),SecurityUtil.authUserCaloriesPerDay());
     }
 
     public List<MealWithExceed> getAllFiltered(LocalDateTime dateTimeStart, LocalDateTime dateTimeEnd) {
         log.info("getAllFiltered");
-        return MealsUtil.getFilteredWithExceeded(service.getAll(SecurityUtil.authUserId()),SecurityUtil.authUserCaloriesPerDay(), dateTimeStart.toLocalTime(), dateTimeEnd.toLocalTime());
+        return MealsUtil.getFilteredWithExceeded(service.getAll(SecurityUtil.getAuthUserId()),SecurityUtil.authUserCaloriesPerDay(), dateTimeStart.toLocalTime(), dateTimeEnd.toLocalTime());
     }
 
     public Meal get(int id) {
         log.info("get {}", id);
-        return service.get(id);
+        if (service.get(id).getUserId() == SecurityUtil.getAuthUserId()) {
+            return service.get(id);
+        } else {
+            throw new NotFoundException("There is no meal for you :(");
+        }
     }
 
     public Meal create(Meal meal) {

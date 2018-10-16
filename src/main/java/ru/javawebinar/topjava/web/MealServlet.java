@@ -25,8 +25,9 @@ public class MealServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
-        mealRestController = appCtx.getBean(MealRestController.class);
+        try(ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");) {
+            mealRestController = appCtx.getBean(MealRestController.class);
+        }
     }
 
     @Override
@@ -70,8 +71,7 @@ public class MealServlet extends HttpServlet {
             case "all":
             default:
                 log.info("getAllFiltered");
-                int userId = Integer.parseInt(request.getParameter("userId"));
-                request.setAttribute("meals", mealRestController.getAll(userId));
+                request.setAttribute("meals", mealRestController.getAll());
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }

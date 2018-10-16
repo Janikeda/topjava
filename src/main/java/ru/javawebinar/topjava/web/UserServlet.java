@@ -30,8 +30,7 @@ public class UserServlet extends HttpServlet {
         log.debug("forward to users");
         switch (action == null ? "all" : action) {
             case "showMealList":
-                String userId = request.getParameter("id");
-                response.sendRedirect("/topjava/meals?userId="+userId);
+                doPost(request, response);
                 break;
             case "all":
             default:
@@ -40,14 +39,12 @@ public class UserServlet extends HttpServlet {
                 break;
         }
     }
-}
 
-//    @Override
-//    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//        String userId = req.getParameter("userId");
-//        if (Integer.parseInt(userId) == SecurityUtil.authUserId()) {
-//            resp.sendRedirect("meals");
-//        }  else {
-//            throw new NotFoundException("Sorry, there is no food for you :(");
-//        }
-//    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        int userId = Integer.parseInt(req.getParameter("id"));
+        SecurityUtil.setAuthUserId(adminRestController.get(userId).getId());
+        resp.sendRedirect("meals");
+    }
+}
