@@ -13,10 +13,6 @@ public class SecurityUtil {
         return DEFAULT_CALORIES_PER_DAY;
     }
 
-    public static int getAuthUserId() {
-        return authUserId;
-    }
-
     public static void setAuthUserId(int userId) {
         authUserId = userId;
     }

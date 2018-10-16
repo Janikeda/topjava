@@ -30,17 +30,17 @@ public class MealRestController {
 
     public List<MealWithExceed> getAll() {
         log.info("getAll");
-        return MealsUtil.getWithExceeded(service.getAll(SecurityUtil.getAuthUserId()),SecurityUtil.authUserCaloriesPerDay());
+        return MealsUtil.getWithExceeded(service.getAll(SecurityUtil.authUserId()),SecurityUtil.authUserCaloriesPerDay());
     }
 
     public List<MealWithExceed> getAllFiltered(LocalDateTime dateTimeStart, LocalDateTime dateTimeEnd) {
         log.info("getAllFiltered");
-        return MealsUtil.getFilteredWithExceeded(service.getAll(SecurityUtil.getAuthUserId()),SecurityUtil.authUserCaloriesPerDay(), dateTimeStart.toLocalTime(), dateTimeEnd.toLocalTime());
+        return MealsUtil.getWithExceeded(service.getAllFilteredDate(SecurityUtil.authUserId(), dateTimeStart.toLocalDate(), dateTimeEnd.toLocalDate()),SecurityUtil.authUserCaloriesPerDay());
     }
 
     public Meal get(int id) {
         log.info("get {}", id);
-        if (service.get(id).getUserId() == SecurityUtil.getAuthUserId()) {
+        if (service.get(id).getUserId() == SecurityUtil.authUserId()) {
             return service.get(id);
         } else {
             throw new NotFoundException("There is no meal for you :(");

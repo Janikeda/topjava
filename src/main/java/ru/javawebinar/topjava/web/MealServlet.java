@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 
 import javax.servlet.ServletConfig;
@@ -67,6 +68,12 @@ public class MealServlet extends HttpServlet {
                         mealRestController.get(getId(request));
                 request.setAttribute("meal", meal);
                 request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
+                break;
+            case "filter":
+                LocalDateTime dateTimeFrom = LocalDateTime.parse(request.getParameter("start"),DateTimeUtil.getDateTimeFormatter());
+                LocalDateTime dateTimeTo = LocalDateTime.parse(request.getParameter("finish"),DateTimeUtil.getDateTimeFormatter());
+                request.setAttribute("meals", mealRestController.getAllFiltered(dateTimeFrom, dateTimeTo));
+                request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
             case "all":
             default:

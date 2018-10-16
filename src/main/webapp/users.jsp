@@ -14,7 +14,6 @@
         <th>Email</th>
         <th>Registration date</th>
         <th></th>
-        <th></th>
     </tr>
     </thead>
     <c:forEach items="${users}" var="user">
@@ -27,8 +26,6 @@
                 <%--<option value="2">2</option>--%>
             <%--</select></td>--%>
             <td><a href="users?action=showMealList&id=${user.id}">Sign in</a></td>
-            <td><a href="users?action=update&id=${user.id}">Update</a></td>
-            <td><a href="users?action=delete&id=${user.id}">Delete</a></td>
         </tr>
     </c:forEach>
 </table>

@@ -20,8 +20,20 @@
 <section>
     <h3><a href="index.html">Home</a></h3>
     <h2>Meals</h2>
-    <a href="meals?action=create">Add Meal</a>
     <hr/>
+    <form action="meals">
+    <dl>
+        <dt>From date</dt>
+        <dd><input type="date" name="dateTimeFrom"></dd>
+    </dl>
+    <dl>
+        <dt>To date</dt>
+        <dd><input type="date" name="dateTimeTo"></dd>
+    </dl>
+    <button type="submit"><a href="meals?action=filter&start=${dateTimeFrom}&finish=dateTimeTo">Filter</a></button>
+    </form>
+
+    <a href="meals?action=create">Add Meal</a>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
         <tr>
