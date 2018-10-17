@@ -14,6 +14,22 @@
         .exceeded {
             color: red;
         }
+
+        dl {
+            margin: 8px 0;
+            padding: 0;
+        }
+
+        dt {
+            display: inline-block;
+            width: 170px;
+        }
+
+        dd {
+            display: inline;
+            margin-left: 8px;
+            vertical-align: top;
+        }
     </style>
 </head>
 <body>
@@ -21,16 +37,26 @@
     <h3><a href="index.html">Home</a></h3>
     <h2>Meals</h2>
     <hr/>
-    <form action="meals">
-    <dl>
-        <dt>From date</dt>
-        <dd><input type="date" name="dateTimeFrom"></dd>
-    </dl>
-    <dl>
-        <dt>To date</dt>
-        <dd><input type="date" name="dateTimeTo"></dd>
-    </dl>
-    <button type="submit"><a href="meals?action=filter&start=${dateTimeFrom}&finish=dateTimeTo">Filter</a></button>
+
+    <form action="meals" method="post">
+        <dl>
+            <dt>From date</dt>
+            <dd><input type="date" value="${dateStart}" name="dateTimeFrom"></dd>
+        </dl>
+        <dl>
+            <dt>To date</dt>
+            <dd><input type="date" value="${dateFinish}" name="dateTimeTo"></dd>
+        </dl>
+
+        <dl>
+            <dt>From time</dt>
+            <dd><input type="time" value="${timeStart}" name="timeFrom"></dd>
+        </dl>
+        <dl>
+            <dt>To time</dt>
+            <dd><input type="time" value="${timeFinish}" name="timeTo"></dd>
+        </dl>
+        <button type="submit" name="filter">Filter</button>
     </form>
 
     <a href="meals?action=create">Add Meal</a>

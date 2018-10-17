@@ -13,9 +13,11 @@ public interface MealRepository {
 
     Meal get(int id);
 
+    Meal update(Meal meal);
+
     List<Meal> getAll(int id);
 
     List<Meal> getAllFilteredDate(int userId, LocalDate start, LocalDate finish);
 
-    List<Meal> getAllFilteredTime(int userId, LocalTime start, LocalTime finish);
+    List<Meal> getAllFilteredTime(List<Meal> meals, LocalTime start, LocalTime finish);
 }

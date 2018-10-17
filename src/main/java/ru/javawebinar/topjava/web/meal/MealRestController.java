@@ -11,7 +11,8 @@ import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
@@ -30,12 +31,19 @@ public class MealRestController {
 
     public List<MealWithExceed> getAll() {
         log.info("getAll");
-        return MealsUtil.getWithExceeded(service.getAll(SecurityUtil.authUserId()),SecurityUtil.authUserCaloriesPerDay());
+        return MealsUtil.getWithExceeded(service.getAll(SecurityUtil.authUserId()), SecurityUtil.authUserCaloriesPerDay());
     }
 
-    public List<MealWithExceed> getAllFiltered(LocalDateTime dateTimeStart, LocalDateTime dateTimeEnd) {
+    public List<MealWithExceed> getAllFiltered(String dateTimeStart, String dateTimeEnd, String timeStart, String timeEnd) {
+        LocalDate start = (LocalDate.parse((dateTimeStart.equals("") ? LocalDate.MIN.toString() : dateTimeStart)));
+        LocalDate finish = (LocalDate.parse((dateTimeEnd.equals("") ? LocalDate.MAX.toString() : dateTimeEnd)));
+        LocalTime startTime = (LocalTime.parse((timeStart.equals("") ? LocalTime.MIN.toString() : timeStart)));
+        LocalTime endTime = (LocalTime.parse((timeEnd.equals("") ? LocalTime.MAX.toString() : timeEnd)));
+
         log.info("getAllFiltered");
-        return MealsUtil.getWithExceeded(service.getAllFilteredDate(SecurityUtil.authUserId(), dateTimeStart.toLocalDate(), dateTimeEnd.toLocalDate()),SecurityUtil.authUserCaloriesPerDay());
+
+        List<Meal> mealList = service.getAllFilteredDate(SecurityUtil.authUserId(), start, finish);
+        return MealsUtil.getWithExceeded(service.getAllFilteredTime(mealList, startTime, endTime), SecurityUtil.authUserCaloriesPerDay());
     }
 
     public Meal get(int id) {

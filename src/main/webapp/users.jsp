@@ -21,10 +21,6 @@
             <td>${user.name}</td>
             <td>${user.email}</td>
             <td>${user.registered}</td>
-            <%--<td><select id="userId" name="userId">--%>
-                <%--<option value="1">1</option>--%>
-                <%--<option value="2">2</option>--%>
-            <%--</select></td>--%>
             <td><a href="users?action=showMealList&id=${user.id}">Sign in</a></td>
         </tr>
     </c:forEach>
