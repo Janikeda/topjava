@@ -18,6 +18,10 @@ public class DateTimeUtil {
         return ldt == null ? "" : ldt.format(DATE_TIME_FORMATTER);
     }
 
+    public static LocalDateTime toDateTime(String str) {
+        return str == null ? LocalDateTime.now() : LocalDateTime.parse(str, DATE_TIME_FORMATTER);
+    }
+
     public static LocalDate parseLocalDate(String str) {
         return StringUtils.isEmpty(str) ? null : LocalDate.parse(str);
     }
