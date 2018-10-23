@@ -21,20 +21,19 @@ public class MealTestData {
     public static final Meal MEAL_5 = new Meal(MEAL_ID + 4, of(2015, Month.MAY, 31, 13, 0), "Обед", 1000);
     public static final Meal MEAL_6 = new Meal(MEAL_ID + 5, of(2015, Month.MAY, 31, 20, 0), "Ужин", 510);
     public static final Meal ADMIN_MEAL_1 = new Meal(ADMIN_MEAL_ID, of(2015, Month.JUNE, 1, 14, 0), "Админ ланч", 510);
-    public static final Meal ADMIN_MEAL_2 = new Meal(ADMIN_MEAL_ID + 1, of(2015, Month.JUNE, 1, 21, 0), "Админ ужин", 1500);
 
-    public static final List<Meal> MEALS = Arrays.asList(MEAL_1, MEAL_2, MEAL_3, MEAL_4, MEAL_5, MEAL_6);
+    public static final List<Meal> MEALS = Arrays.asList(MEAL_6, MEAL_5, MEAL_4, MEAL_3, MEAL_2, MEAL_1);
 
-    public static Meal getCreated() {
-        return new Meal(null, of(2015, Month.JUNE, 1, 18, 0), "Созданный ужин", 300);
+    public static Meal create() {
+        return new Meal(null, of(2018, Month.OCTOBER, 21, 20, 0), "New Meal", 800);
     }
 
-    public static Meal getUpdated() {
-        return new Meal(MEAL_ID, MEAL_1.getDateTime(), "Обновленный завтрак", 200);
+    public static Meal update() {
+        return new Meal(MEAL_ID, MEAL_1.getDateTime(), "Updated Meal", 800);
     }
 
     public static void assertMatch(Meal actual, Meal expected) {
-        assertThat(actual).isEqualToIgnoringGivenFields(expected, "user");
+        assertThat(actual).isEqualToComparingFieldByField(expected);
     }
 
     public static void assertMatch(Iterable<Meal> actual, Meal... expected) {
@@ -42,8 +41,6 @@ public class MealTestData {
     }
 
     public static void assertMatch(Iterable<Meal> actual, Iterable<Meal> expected) {
-        assertThat(actual).usingElementComparatorIgnoringFields("user").isEqualTo(expected);
+        assertThat(actual).usingFieldByFieldElementComparator().isEqualTo(expected);
     }
 }
-
-
