@@ -18,7 +18,6 @@ import ru.javawebinar.topjava.ActiveDbProfileResolver;
 import java.util.concurrent.TimeUnit;
 
 import static org.slf4j.LoggerFactory.getLogger;
-import static ru.javawebinar.topjava.Profiles.POSTGRES_DB;
 
 @SpringJUnitConfig(locations = {
         "classpath:spring/spring-app.xml",
@@ -29,9 +28,9 @@ import static ru.javawebinar.topjava.Profiles.POSTGRES_DB;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public abstract class AbstractServiceTest {
 
-    protected static final Logger log = getLogger("result");
+    private static final Logger log = getLogger("result");
 
-    protected static StringBuilder results = new StringBuilder();
+    private static StringBuilder results = new StringBuilder();
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
